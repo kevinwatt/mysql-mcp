@@ -475,6 +475,44 @@ mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
         isError: !result.success
       };
     }
+
+    case "list_tables": {
+      const results = await executeQuery<TableMetadata[]>(
+        "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()"
+      );
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(results, null, 2)
+          }
+        ],
+        isError: false
+      };
+    }
+
+    case "describe_table": {
+      const tableName = args?.table as string;
+      if (!tableName) {
+        throw new Error("Table name is required");
+      }
+
+      const results = await executeQuery<ColumnMetadata[]>(
+        "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ?",
+        [tableName]
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(results, null, 2)
+          }
+        ],
+        isError: false
+      };
+    }
     
     default:
       throw new Error(`未知的工具: ${name}`);

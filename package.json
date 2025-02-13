@@ -1,6 +1,6 @@
 {
   "name": "@kevinwatt/mysql-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server implementation for MySQL database access",
   "license": "MIT",
   "author": "Dewei Yen (https://github.com/kevinwatt)",
