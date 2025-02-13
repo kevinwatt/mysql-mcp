@@ -1,0 +1,37 @@
+# Source
+*.ts
+!*.d.ts
+
+# Config
+tsconfig.json
+.prettierrc
+.eslintrc
+.editorconfig
+
+# Git
+.git
+.gitignore
+
+# CI
+.github
+.circleci
+
+# IDE
+.idea
+.vscode
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules
+
+# Environment
+.env
+.env.*
+
+# Build
+coverage
+.nyc_output 

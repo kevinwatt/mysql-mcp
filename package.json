@@ -1,7 +1,7 @@
 {
   "name": "@kevinwatt/mysql-mcp",
-  "version": "1.0.7",
-  "description": "MCP server for interacting with MySQL databases based on Node",
+  "version": "0.1.0",
+  "description": "MCP server implementation for MySQL database access",
   "license": "MIT",
   "author": "Dewei Yen (https://github.com/kevinwatt)",
   "type": "module",
@@ -13,7 +13,7 @@
   "files": [
     "dist",
     "README.md",
-    "assets"
+    "LICENSE.md"
   ],
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",
@@ -33,12 +33,20 @@
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinwatt/mysql-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kevinwatt/mysql-mcp/issues"
+  },
+  "homepage": "https://github.com/kevinwatt/mysql-mcp#readme",
   "keywords": [
-    "node",
     "mcp",
     "mysql",
     "database",
     "dive",
+    "llm",
     "ai"
   ]
 }
