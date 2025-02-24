@@ -72,7 +72,7 @@ enum SQLOperationType {
 const serverConfig = {
   server: {
     name: "mysql-mcp",
-    version: "0.1.0",
+    version: "0.1.3",
   },
   mysql: {
     host: process.env.MYSQL_HOST || "127.0.0.1",
