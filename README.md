@@ -1,5 +1,7 @@
 # MySQL MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@kevinwatt/mysql-mcp)](https://smithery.ai/server/@kevinwatt/mysql-mcp)
+
 An MCP server implementation that integrates with MySQL databases, providing secure database access capabilities for LLMs.
 
 ## Features
@@ -21,6 +23,15 @@ An MCP server implementation that integrates with MySQL databases, providing sec
 
 ## Installation
 
+### Installing via Smithery
+
+To install MySQL MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@kevinwatt/mysql-mcp):
+
+```bash
+npx -y @smithery/cli install @kevinwatt/mysql-mcp --client claude
+```
+
+### Manual Installation
 ```bash
 npm install -g @kevinwatt/mysql-mcp
 ```
