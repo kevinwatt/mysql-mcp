@@ -23,21 +23,24 @@ An MCP server implementation that integrates with MySQL databases, providing sec
 
 ```bash
 npm install -g github:gemini-dk/mysql-mcp-server
+git clone https://github.com/gemini-dk/mysql-mcp-server.git
+cd mysql-mcp-server
+npm install
+npm run build
 ```
 
-## Usage with [Dive Desktop](https://github.com/OpenAgentPlatform/Dive)
+## MCP Setup
 
-1. Click "+ Add MCP Server" in Dive Desktop
-2. Copy and paste this configuration:
+1. Copy and paste this configuration
+2. Replace /path/to/mysql-mcp-server with the actual path where you cloned the repository.
 
 ```json
 {
   "mcpServers": {
     "mysql": {
-      "command": "npx",
+      "command": "node",
       "args": [
-        "-y",
-        "github:gemini-dk/mysql-mcp-server"
+        "/path/to/mysql-mcp-server/dist/index.js"
       ],
       "env": {
         "MYSQL_HOST": "127.0.0.1",
@@ -50,8 +53,6 @@ npm install -g github:gemini-dk/mysql-mcp-server
   }
 }
 ```
-
-3. Click "Save" to install the MCP server
 
 ## Tool Documentation
 
@@ -99,7 +100,7 @@ Ask your LLM to:
 If needed, start the server manually:
 
 ```bash
-npx @kevinwatt/mysql-mcp
+node /path/to/mysql-mcp-server/dist/index.js
 ```
 
 ## Requirements
