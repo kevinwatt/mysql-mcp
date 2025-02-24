@@ -364,10 +364,11 @@ mcpServer.setRequestHandler(ReadResourceRequestSchema, async (request) => {
     throw new Error("Invalid resource URI");
   }
 
-  const results = (await executeQuery(
-    "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ?",
-    [tableName],
-  )) as ColumnMetadata[];
+      const results = (await executeQuery(
+        "SELECT column_name, data_type FROM information_schema.columns " +
+        "WHERE table_schema = DATABASE() AND table_name = ?",
+        [tableName],
+      )) as ColumnMetadata[];
 
   return {
     contents: [
@@ -499,7 +500,8 @@ mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       const results = await executeQuery<ColumnMetadata[]>(
-        "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ?",
+        "SELECT column_name, data_type FROM information_schema.columns " +
+        "WHERE table_schema = DATABASE() AND table_name = ?",
         [tableName]
       );
 
