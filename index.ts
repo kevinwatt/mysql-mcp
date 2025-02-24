@@ -2,8 +2,8 @@
 
 /**
  * MySQL MCP Server
- * 此服務提供一個 Model Context Protocol 伺服器，用於安全地存取 MySQL 資料庫
- * 支援唯讀查詢和資料庫結構檢視
+ * This service provides a Model Context Protocol server for secure MySQL database access
+ * Supports read-only queries and database structure inspection
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -16,10 +16,10 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import mysql, { MysqlError, PoolConnection } from "mysql";
 
-// 型別定義
+// Type definitions
 type MySQLErrorType = MysqlError | null;
 
-// 介面定義
+// Interface definitions
 interface TableMetadata {
   table_name: string;
 }
@@ -60,7 +60,7 @@ interface QueryLog {
   affectedRows?: number;
 }
 
-// 列舉定義
+// Enum definitions
 enum SQLOperationType {
   SELECT = 'SELECT',
   INSERT = 'INSERT',
@@ -68,7 +68,7 @@ enum SQLOperationType {
   DELETE = 'DELETE'
 }
 
-// 配置設定
+// Configuration settings
 const serverConfig = {
   server: {
     name: "mysql-mcp",
@@ -86,18 +86,23 @@ const serverConfig = {
     schema: "schema",
   },
   limits: {
-    queryTimeout: 30000,  // 查詢超時時間 (毫秒)
-    maxRows: 1000,       // 最大回傳行數
-    maxQueryLength: 4096 // 最大 SQL 長度
+    queryTimeout: 30000,  // Query timeout in milliseconds
+    maxRows: 1000,       // Maximum number of rows to return
+    maxQueryLength: 4096 // Maximum SQL query length
   }
 };
 
+// Unified query string constants
+const COLUMN_METADATA_QUERY = 
+  "SELECT column_name, data_type FROM information_schema.columns " +
+  "WHERE table_schema = DATABASE() AND table_name = ?";
+
 /**
- * MySQL 查詢輔助函數
- * @param connection MySQL 連線物件
- * @param sql SQL 查詢字串
- * @param params 查詢參數
- * @returns Promise<T> 查詢結果
+ * MySQL Query Helper Function
+ * @param connection MySQL connection object
+ * @param sql SQL query string
+ * @param params Query parameters
+ * @returns Promise<T> Query results
  */
 const executeQueryWithConnection = <T>(
   connection: PoolConnection,
@@ -113,7 +118,7 @@ const executeQueryWithConnection = <T>(
 };
 
 /**
- * 從連線池取得連線
+ * Get connection from pool
  */
 const getConnectionFromPool = (pool: mysql.Pool): Promise<PoolConnection> => {
   return new Promise((resolve, reject) => {
@@ -125,7 +130,7 @@ const getConnectionFromPool = (pool: mysql.Pool): Promise<PoolConnection> => {
 };
 
 /**
- * 開始交易
+ * Start transaction
  */
 const startTransaction = (connection: PoolConnection): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -137,7 +142,7 @@ const startTransaction = (connection: PoolConnection): Promise<void> => {
 };
 
 /**
- * 回滾交易
+ * Rollback transaction
  */
 const rollbackTransaction = (connection: PoolConnection): Promise<void> => {
   return new Promise((resolve) => {
@@ -145,10 +150,10 @@ const rollbackTransaction = (connection: PoolConnection): Promise<void> => {
   });
 };
 
-// 初始化資料庫連線池
+// Initialize database connection pool
 const connectionPool = mysql.createPool(serverConfig.mysql);
 
-// 初始化 MCP 伺服器
+// Initialize MCP server
 const mcpServer = new Server(serverConfig.server, {
   capabilities: {
     resources: {},
@@ -157,23 +162,23 @@ const mcpServer = new Server(serverConfig.server, {
 });
 
 /**
- * 檢查查詢限制
+ * Check query limits
  */
 function checkQueryLimits(sql: string): SQLSecurityCheck {
   if (sql.length > serverConfig.limits.maxQueryLength) {
     return {
       safe: false,
-      reason: `SQL 查詢長度超過限制 (${serverConfig.limits.maxQueryLength} 字元)`
+      reason: `SQL query length exceeds limit (${serverConfig.limits.maxQueryLength} characters)`
     };
   }
   return { safe: true };
 }
 
 /**
- * SQL 安全檢查器
+ * SQL Security Checker
  */
 function checkSQLSecurity(sql: string): SQLSecurityCheck {
-  // 檢查危險關鍵字
+  // Check for dangerous keywords
   const dangerousPatterns = [
     /;\s*DROP\s+/i,
     /;\s*DELETE\s+FROM\s+/i,
@@ -189,7 +194,7 @@ function checkSQLSecurity(sql: string): SQLSecurityCheck {
     if (pattern.test(sql)) {
       return {
         safe: false,
-        reason: '檢測到潛在的 SQL 注入攻擊'
+        reason: 'Potential SQL injection attack detected'
       };
     }
   }
@@ -198,10 +203,10 @@ function checkSQLSecurity(sql: string): SQLSecurityCheck {
 }
 
 /**
- * 記錄查詢日誌
+ * Log query execution
  */
 async function logQuery(log: QueryLog): Promise<void> {
-  // 這裡可以根據需求將日誌寫入資料庫或檔案
+  // Log can be written to database or file based on requirements
   console.log(JSON.stringify({
     type: 'query_log',
     ...log
@@ -209,7 +214,7 @@ async function logQuery(log: QueryLog): Promise<void> {
 }
 
 /**
- * 效能監控包裝函數
+ * Performance monitoring wrapper function
  */
 async function withPerformanceMonitoring<T>(
   operation: SQLOperationType,
@@ -254,8 +259,8 @@ async function withPerformanceMonitoring<T>(
 }
 
 /**
- * 執行資料修改操作
- * 包含交易控制和錯誤處理
+ * Execute data modification operation
+ * Includes transaction control and error handling
  */
 async function executeModifyQuery(sql: string, params: any[] = []): Promise<SQLExecuteResult> {
   const connection = await getConnectionFromPool(connectionPool);
@@ -297,8 +302,8 @@ async function executeModifyQuery(sql: string, params: any[] = []): Promise<SQLE
 }
 
 /**
- * 執行唯讀查詢
- * 在唯讀交易中執行查詢以確保安全性
+ * Execute read-only query
+ * Execute query in read-only transaction to ensure safety
  */
 async function executeReadOnlyQuery<T>(sql: string): Promise<T> {
   const connection = await getConnectionFromPool(connectionPool);
@@ -336,7 +341,7 @@ async function executeReadOnlyQuery<T>(sql: string): Promise<T> {
   }
 }
 
-// MCP 請求處理器設定
+// MCP request handler setup
 mcpServer.setRequestHandler(ListResourcesRequestSchema, async () => {
   const results = (await executeQuery(
     "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()",
@@ -365,7 +370,7 @@ mcpServer.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   }
 
   const results = (await executeQuery(
-    "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ?",
+    COLUMN_METADATA_QUERY,
     [tableName],
   )) as ColumnMetadata[];
 
@@ -499,7 +504,7 @@ mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       const results = await executeQuery<ColumnMetadata[]>(
-        "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ?",
+        COLUMN_METADATA_QUERY,
         [tableName]
       );
 
@@ -520,7 +525,7 @@ mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 /**
- * 執行一般查詢
+ * Execute general query
  */
 async function executeQuery<T>(sql: string, params: any[] = []): Promise<T> {
   const connection = await getConnectionFromPool(connectionPool);

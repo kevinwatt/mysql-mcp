@@ -6,6 +6,7 @@
   "author": "Dewei Yen (https://github.com/kevinwatt)",
   "type": "module",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "preferGlobal": true,
   "bin": {
     "mysql-mcp": "dist/index.js"
@@ -16,17 +17,18 @@
     "LICENSE.md"
   ],
   "scripts": {
-    "build": "tsc && shx chmod +x dist/*.js",
+    "build": "tsc",
     "prepare": "npm run build",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.1",
     "mysql": "^2.18.1"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
     "@types/mysql": "^2.15.26",
+    "@types/node": "^20.10.0",
     "shx": "^0.3.4",
     "typescript": "^5.6.2"
   },
