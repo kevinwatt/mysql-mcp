@@ -22,7 +22,7 @@ An MCP server implementation that integrates with MySQL databases, providing sec
 ## Installation
 
 ```bash
-npm install -g @kevinwatt/mysql-mcp
+npm install -g github:gemini-dk/mysql-mcp-server
 ```
 
 ## Usage with [Dive Desktop](https://github.com/OpenAgentPlatform/Dive)
@@ -37,7 +37,7 @@ npm install -g @kevinwatt/mysql-mcp
       "command": "npx",
       "args": [
         "-y",
-        "@kevinwatt/mysql-mcp"
+        "github:gemini-dk/mysql-mcp-server"
       ],
       "env": {
         "MYSQL_HOST": "127.0.0.1",
